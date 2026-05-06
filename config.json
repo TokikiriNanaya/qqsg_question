@@ -1,0 +1,42 @@
+{
+  "title_matching": {
+    "template_path": "img/title.png",
+    "match_threshold": 0.8
+  },
+  "question_area_offset": {
+    "top_left_x": 10,
+    "top_left_y": 61,
+    "bottom_right_x": 300,
+    "bottom_right_y": 149
+  },
+  "answer_area_offset_a": {
+    "top_left_x": 40,
+    "top_left_y": 154,
+    "bottom_right_x": 300,
+    "bottom_right_y": 184
+  },
+  "answer_area_offset_b": {
+    "top_left_x": 40,
+    "top_left_y": 184,
+    "bottom_right_x": 300,
+    "bottom_right_y": 214
+  },
+  "answer_area_offset_c": {
+    "top_left_x": 40,
+    "top_left_y": 214,
+    "bottom_right_x": 300,
+    "bottom_right_y": 244
+  },
+  "answer_area_offset_d": {
+    "top_left_x": 40,
+    "top_left_y": 244,
+    "bottom_right_x": 300,
+    "bottom_right_y": 274
+  },
+  "screenshot": {
+    "capture_interval": 1.0,
+    "output_dir": "screenshots",
+    "max_log_messages": 200,
+    "default_mode": "window"
+  }
+}

@@ -1,0 +1,8 @@
+pyautogui==0.9.54
+pillow==12.2.0
+keyboard==0.13.5
+pywin32==311
+opencv-python==4.6.0.66
+numpy==1.26.4
+paddleocr==2.7.3
+requests==2.31.0
