@@ -1,4 +1,8 @@
 {
+  "app": {
+    "version": "v1.0.0",
+    "name": "推举孝廉小助手"
+  },
   "title_matching": {
     "template_path": "img/title.png",
     "match_threshold": 0.8
