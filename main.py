@@ -307,7 +307,7 @@ class ScreenshotTool:
 
     def calculate_option_similarities(self, correct_answer, options):
         """
-        计算每个选项与题库答案的相似度（使用相对相似度）
+        计算每个选项与题库答案的相似度（使用序列匹配）
         
         Args:
             correct_answer: 题库中的正确答案
@@ -343,8 +343,8 @@ class ScreenshotTool:
                 length_ratio = shorter_len / longer_len if longer_len > 0 else 0
                 raw_similarities[option_key] = 0.7 + (length_ratio * 0.25)  # 0.7-0.95之间
             else:
-                # 否则计算字符集相似度
-                raw_similarities[option_key] = self.similarity_score(clean_answer, clean_option)
+                # 否则计算序列相似度（考虑字符顺序）
+                raw_similarities[option_key] = self.sequence_similarity(clean_answer, clean_option)
 
         # 第二步：找到最高相似度
         max_similarity = max(raw_similarities.values()) if raw_similarities else 0.0
@@ -360,6 +360,64 @@ class ScreenshotTool:
                 option_similarities[option_key] = 0.0
 
         return option_similarities
+
+    def sequence_similarity(self, text1, text2):
+        """
+        计算两个文本的序列相似度（考虑字符顺序）
+        使用最长公共子序列（LCS）算法
+        
+        Args:
+            text1: 文本1
+            text2: 文本2
+        
+        Returns:
+            float: 相似度 (0-1)
+        """
+        if not text1 or not text2:
+            return 0.0
+        
+        # 标准化标点符号
+        text1_normalized = self.normalize_punctuation(text1)
+        text2_normalized = self.normalize_punctuation(text2)
+        
+        # 计算最长公共子序列长度
+        lcs_length = self._lcs_length(text1_normalized, text2_normalized)
+        
+        # 相似度 = LCS长度 / 较长文本的长度
+        max_len = max(len(text1_normalized), len(text2_normalized))
+        
+        if max_len == 0:
+            return 0.0
+        
+        return lcs_length / max_len
+    
+    def _lcs_length(self, text1, text2):
+        """
+        计算两个字符串的最长公共子序列长度
+        使用动态规划算法
+        
+        Args:
+            text1: 字符串1
+            text2: 字符串2
+        
+        Returns:
+            int: LCS长度
+        """
+        m = len(text1)
+        n = len(text2)
+        
+        # 创建DP表
+        dp = [[0] * (n + 1) for _ in range(m + 1)]
+        
+        # 填充DP表
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                if text1[i - 1] == text2[j - 1]:
+                    dp[i][j] = dp[i - 1][j - 1] + 1
+                else:
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+        
+        return dp[m][n]
 
     def similarity_score(self, text1, text2):
         """
