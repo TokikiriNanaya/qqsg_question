@@ -562,6 +562,22 @@ class ScreenshotTool:
             else:
                 self.bank_answer_var.set("--")
 
+            # 首先确定哪个选项应该是推荐答案（用于高亮和显示）
+            recommended_option = None
+            if option_similarities:
+                # 找到具有最高选项相似度的选项
+                max_similarity = max(option_similarities.values())
+                if max_similarity > 0:
+                    # 找到具有最高相似度的选项
+                    for option_key, similarity in option_similarities.items():
+                        if similarity == max_similarity and option_key in answer_texts and answer_texts[option_key]:
+                            recommended_option = option_key
+                            break
+            
+            # 如果没有通过相似度找到，则使用correct_option
+            if not recommended_option and correct_option and correct_option in answer_texts:
+                recommended_option = correct_option
+            
             # 更新四个选项
             for option in ['a', 'b', 'c', 'd']:
                 if option in answer_texts and answer_texts[option]:
@@ -573,8 +589,8 @@ class ScreenshotTool:
                                                                  option_similarities)
                     self.option_vars[f'{option}_confidence'].set(f"{confidence:.0f}%")
 
-                    # 设置颜色和字体（正确答案高亮加粗）
-                    if correct_option and option == correct_option:
+                    # 设置颜色和字体（推荐答案高亮加粗）
+                    if recommended_option and option == recommended_option:
                         self.option_labels[option]['content'].configure(
                             foreground="#2E7D32",
                             font=("Arial", 9, "bold")  # 加粗
@@ -605,10 +621,10 @@ class ScreenshotTool:
                     )
 
             # 更新最佳答案显示
-            if correct_option and correct_option in answer_texts:
+            if recommended_option and recommended_option in answer_texts:
                 # 使用选项相似度作为置信度
-                option_confidence = option_similarities.get(correct_option, match_similarity)
-                best_text = f"{correct_option.upper()} {answer_texts[correct_option]} {option_confidence:.0%}"
+                option_confidence = option_similarities.get(recommended_option, match_similarity)
+                best_text = f"{recommended_option.upper()} {answer_texts[recommended_option]} {option_confidence:.0%}"
                 self.best_answer_var.set(best_text)
                 # 隐藏录入按钮
                 if hasattr(self, 'add_question_btn'):
